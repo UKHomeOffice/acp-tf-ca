@@ -1,3 +1,7 @@
+locals {
+  email_tags = { for i, email in var.email_addresses : "email${i}" => email }
+}
+
 resource "aws_acmpca_certificate_authority" "ca_authority" {
 
   certificate_authority_configuration {
@@ -27,6 +31,14 @@ resource "aws_acmpca_certificate_authority" "ca_authority" {
 resource "aws_iam_user" "acmpca_iam_user" {
   name = "${var.name}-acmpca-user"
   path = "/"
+
+  tags = merge(
+    var.tags,
+    local.email_tags,
+    {
+      "key_rotation" = var.key_rotation
+    },
+  )
 }
 
 #policy attachment for CA policy
@@ -55,4 +67,9 @@ resource "aws_iam_policy_attachment" "acmpca_iam_policy_attachment" {
   name       = "${var.name}-acmpcaPolicy-attachment"
   users      = [aws_iam_user.acmpca_iam_user.name]
   policy_arn = aws_iam_policy.acmpca_policy.arn
+}
+
+module "self_serve_access_keys" {
+  source     = "git::https://github.com/UKHomeOffice/acp-tf-self-serve-access-keys?ref=v0.1.0"
+  user_names = aws_iam_user.acmpca_iam_user.*.name
 }
