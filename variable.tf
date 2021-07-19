@@ -4,9 +4,19 @@ variable "common_name" {
   default     = ""
 }
 
+variable "email_addresses" {
+  description = "A list of email addresses for key rotation notifications."
+  default     = []
+}
+
 variable "environment" {
   description = "Environment of the AWS CA"
   default     = ""
+}
+
+variable "key_rotation" {
+  description = "Enable email notifications for old IAM keys."
+  default     = "true"
 }
 
 variable "name" {
