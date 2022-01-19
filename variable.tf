@@ -6,6 +6,7 @@ variable "common_name" {
 
 variable "email_addresses" {
   description = "A list of email addresses for key rotation notifications."
+  type        = list(string)
   default     = []
 }
 
@@ -31,5 +32,6 @@ variable "type" {
 
 variable "tags" {
   description = "Specifies a key-value map of user-defined tags that are attached to the certificate authority."
+  type        = map(string)
   default     = {}
 }
